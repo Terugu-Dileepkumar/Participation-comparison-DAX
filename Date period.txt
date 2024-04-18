@@ -1,0 +1,140 @@
+Data Period = 
+VAR SelectedDate = TODAY()
+VAR StartOfWeek = SelectedDate - WEEKDAY(SelectedDate, 2) + 1
+VAR StartOf_Quarter = DATE(YEAR(SelectedDate), QUARTER(SelectedDate) * 3 - 2, 1)
+VAR EndOf_Quarter = EOMONTH(StartOf_Quarter, 2)
+VAR Last30DaysStart = TODAY() - 29
+VAR Last30DaysEnd = TODAY()
+VAR LastWeekSameDaysEnd = IF(WEEKDAY(SelectedDate) <= 2, SelectedDate - 1, SelectedDate - 2)
+VAR LastYearSamePeriod = DATE(YEAR(SelectedDate) - 1, MONTH(SelectedDate), DAY(StartOfWeek))
+RETURN
+    IF(
+        SELECTEDVALUE(Parameter[Parameter Fields]) = "'reporting_parameter'[Disbursements]",
+        (SWITCH (
+            SELECTEDVALUE('DatePeriod'[Date Period]),
+			"As of Now",
+                CALCULATE(
+                    SUM('reporting_parameter'[participant_disbursement])
+                ),
+			"Current 30 Days",
+                CALCULATE(
+                    SUM('reporting_parameter'[participant_disbursement]),
+                    'reporting_parameter'[activity_date] >= Last30DaysStart &&
+                    'reporting_parameter'[activity_date] <= Last30DaysEnd
+                ),
+			"Previous 30 Days",
+				CALCULATE(
+					SUM('reporting_parameter'[participant_disbursement]),
+					'reporting_parameter'[activity_date] >= TODAY() - 59 &&
+					'reporting_parameter'[activity_date] <= TODAY() - 30
+				),
+            "Current week",
+                CALCULATE(
+                    SUM('reporting_parameter'[participant_disbursement]),
+                    'reporting_parameter'[activity_date] >= StartOfWeek &&
+                    'reporting_parameter'[activity_date] <= SelectedDate
+                ),
+			"Previous Week",
+				CALCULATE(
+					SUM('reporting_parameter'[participant_disbursement]), 
+					'reporting_parameter'[activity_date] >= StartOfWeek - 7 && 
+					'reporting_parameter'[activity_date] < StartOfWeek - 1
+				),
+			"Previous Week Same Days",
+				CALCULATE(
+					SUM('reporting_parameter'[participant_disbursement]),
+					'reporting_parameter'[activity_date] >= StartOfWeek - 6 &&
+					'reporting_parameter'[activity_date] <= LastWeekSameDaysEnd
+				),           
+			"Previous Year Current Week",
+				CALCULATE(
+					SUM('reporting_parameter'[participant_disbursement]),
+					'reporting_parameter'[activity_date] >= DATE(YEAR(SelectedDate) - 1, MONTH(SelectedDate), DAY(SelectedDate) - WEEKDAY(SelectedDate, 2) + 1) &&
+					'reporting_parameter'[activity_date] <= DATE(YEAR(SelectedDate) - 1, MONTH(SelectedDate), DAY(SelectedDate) - WEEKDAY(SelectedDate, 2) + 3)
+				),
+            "Previous Year Last Week",
+				CALCULATE(
+					SUM('reporting_parameter'[participant_disbursement]), 
+					'reporting_parameter'[activity_date] >= StartOfWeek - 371 && 
+					'reporting_parameter'[activity_date] <= SelectedDate - 371
+				),
+            "Current Month",
+                CALCULATE(
+                    SUM('reporting_parameter'[participant_disbursement]),
+                    'reporting_parameter'[activity_date] >= DATE(YEAR(SelectedDate), MONTH(SelectedDate), 1) &&
+                    'reporting_parameter'[activity_date] <= SelectedDate
+                ),
+			"Previous Month",
+				CALCULATE(
+					SUM('reporting_parameter'[participant_disbursement]), 
+					'reporting_parameter'[activity_date] >= DATE(YEAR(SelectedDate), MONTH(SelectedDate) - 1, 1) &&
+					'reporting_parameter'[activity_date] < DATE(YEAR(SelectedDate), MONTH(SelectedDate), 1)
+				),
+			"Previous Month Same Days",
+				CALCULATE(
+					SUM('reporting_parameter'[participant_disbursement]), 
+					'reporting_parameter'[activity_date] >= DATE(YEAR(SelectedDate), MONTH(SelectedDate) - 1, 1) && 
+					'reporting_parameter'[activity_date] <= SelectedDate - MIN(20, DAY(SelectedDate))
+				),
+			"Previous Year Current Month",
+				CALCULATE(
+					SUM('reporting_parameter'[participant_disbursement]), 
+					'reporting_parameter'[activity_date] >= DATE(YEAR(SelectedDate) - 1, MONTH(SelectedDate), 1) && 
+					'reporting_parameter'[activity_date] <= SelectedDate - 365
+				), 
+			"Previous Year Last Month",
+				CALCULATE(
+						SUM('reporting_parameter'[participant_disbursement]), 
+						'reporting_parameter'[activity_date] >= DATE(YEAR(SelectedDate) - 1, MONTH(SelectedDate) - 1, 1) && 
+						'reporting_parameter'[activity_date] <= SelectedDate - 365
+				),
+			"Current Quarter",
+                CALCULATE(
+                    SUM('reporting_parameter'[participant_disbursement]),
+                    'reporting_parameter'[activity_date] >= StartOf_Quarter &&
+                    'reporting_parameter'[activity_date] <= EndOf_Quarter
+                ),
+			"Previous Quarter",
+				CALCULATE(
+					SUM('reporting_parameter'[participant_disbursement]), 
+					'reporting_parameter'[activity_date] >= StartOf_Quarter - 90 &&
+					'reporting_parameter'[activity_date] < StartOf_Quarter
+				),
+			"Previous Quarter Same Days",
+                 CALCULATE(
+                    SUM('reporting_parameter'[participant_disbursement]), 
+                    'reporting_parameter'[activity_date] >= StartOf_Quarter - 90 && 
+                    'reporting_parameter'[activity_date] <= DATE(YEAR(SelectedDate), 1, 2)
+                ),
+            "Previous Year Current Quarter",
+				CALCULATE(
+					SUM('reporting_parameter'[participant_disbursement]), 
+					'reporting_parameter'[activity_date] >= StartOf_Quarter - 365 && 
+					'reporting_parameter'[activity_date] <= EndOf_Quarter - 365
+				),  
+			"Previous Year Last Quarter",
+				CALCULATE(
+					SUM('reporting_parameter'[participant_disbursement]), 
+					'reporting_parameter'[activity_date] >= DATE(YEAR(TODAY()) - 1, 10, 1) &&
+					'reporting_parameter'[activity_date] <= DATE(YEAR(TODAY()) - 1, 12, 31)
+				),
+            "Current Year",
+                CALCULATE(
+                    SUM('reporting_parameter'[participant_disbursement]),
+                    'reporting_parameter'[activity_date] >= DATE(YEAR(SelectedDate), 1, 1) &&
+                    'reporting_parameter'[activity_date] <= SelectedDate
+                ),
+            "Previous Year",
+                CALCULATE(
+                    SUM('reporting_parameter'[participant_disbursement]),
+                    'reporting_parameter'[activity_date] >= DATE(YEAR(SelectedDate) - 1, 1, 1) &&
+                    'reporting_parameter'[activity_date] < DATE(YEAR(SelectedDate), 1, 1)
+                ),
+			"Previous Year Same Days",
+				CALCULATE(
+					SUM('reporting_parameter'[participant_disbursement]), 
+					'reporting_parameter'[activity_date] >= DATE(YEAR(SelectedDate) - 1, MONTH(SelectedDate), DAY(SelectedDate)) - MIN(1, DAY(SelectedDate)) && 
+					'reporting_parameter'[activity_date] <= SelectedDate - 365
+				),
+            0
+        ))

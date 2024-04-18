@@ -1,0 +1,275 @@
+Top 5 For Compare With = 
+VAR SelectedDate = TODAY()
+VAR StartOfWeek = SelectedDate - WEEKDAY(SelectedDate, 2) + 1
+VAR StartOf_Quarter = DATE(YEAR(SelectedDate), QUARTER(SelectedDate) * 3 - 2, 1)
+VAR EndOf_Quarter = EOMONTH(StartOf_Quarter, 2)
+VAR Last30DaysStart = TODAY() - 29
+VAR Last30DaysEnd = TODAY()
+VAR LastWeekSameDaysEnd = IF(WEEKDAY(SelectedDate) <= 2, SelectedDate - 1, SelectedDate - 2)
+VAR LastYearSamePeriod = DATE(YEAR(SelectedDate) - 1, MONTH(SelectedDate), DAY(StartOfWeek))
+RETURN
+IF(SELECTEDVALUE(CompareWith[Compare With])="As of Now",
+SWITCH(
+    TRUE(),
+    SELECTEDVALUE(Parameter[Parameter Fields])="'reporting_parameter'[Outstanding Balance]",
+    RANKX(
+                ALLSELECTED('reporting_parameter'[participant_and_function]),
+                CALCULATE(
+                    SUM('reporting_parameter'[outstanding_balance]),
+                    ALLEXCEPT('reporting_parameter','reporting_parameter'[participant_and_function])
+                ),
+                ,
+                DESC,
+                Dense
+)
+    ,
+    SELECTEDVALUE(Parameter[Parameter Fields])="'reporting_parameter'[Loan Balance]",
+    RANKX(
+                ALLSELECTED('reporting_parameter'[participant_and_function]),
+                CALCULATE(
+                    SUM('reporting_parameter'[disbursement_balance]),
+                    ALLEXCEPT('reporting_parameter','reporting_parameter'[participant_and_function])
+                ),
+                ,
+                DESC,
+                Dense
+)
+    , 
+    SELECTEDVALUE(Parameter[Parameter Fields])="'reporting_parameter'[Disbursements]",
+    RANKX(
+                ALLSELECTED('reporting_parameter'[participant_and_function]),
+                CALCULATE(
+                    SUM('reporting_parameter'[participant_disbursement]),
+                    ALLEXCEPT('reporting_parameter','reporting_parameter'[participant_and_function])
+                ),
+                ,
+                DESC,
+                Dense
+)
+    ,
+    SELECTEDVALUE(Parameter[Parameter Fields])="'reporting_parameter'[Fee Charged]",
+    RANKX(
+                ALLSELECTED('reporting_parameter'[participant_and_function]),
+                CALCULATE(
+                    SUM('reporting_parameter'[fee_accrued]),
+                    ALLEXCEPT('reporting_parameter','reporting_parameter'[participant_and_function])
+                ),
+                ,
+                DESC,
+                Dense
+)
+    ,
+    SELECTEDVALUE(Parameter[Parameter Fields])="'reporting_parameter'[Fee Repayments]",
+    RANKX(
+                ALLSELECTED('reporting_parameter'[participant_and_function]),
+                CALCULATE(
+                    SUM('reporting_parameter'[fee_paid]),
+                    ALLEXCEPT('reporting_parameter','reporting_parameter'[participant_and_function])
+                ),
+                ,
+                DESC,
+                Dense
+)
+    ,
+    SELECTEDVALUE(Parameter[Parameter Fields])="'reporting_parameter'[Interest Charged]",
+    RANKX(
+                ALLSELECTED('reporting_parameter'[participant_and_function]),
+                CALCULATE(
+                    SUM('reporting_parameter'[interest_accrued]),
+                    ALLEXCEPT('reporting_parameter','reporting_parameter'[participant_and_function])
+                ),
+                ,
+                DESC,
+                Dense
+)
+    ,
+    SELECTEDVALUE(Parameter[Parameter Fields])="'reporting_parameter'[Interest Repayments]",
+    RANKX(
+                ALLSELECTED('reporting_parameter'[participant_and_function]),
+                CALCULATE(
+                    SUM('reporting_parameter'[interest_paid]),
+                    ALLEXCEPT('reporting_parameter','reporting_parameter'[participant_and_function])
+                ),
+                ,
+                DESC,
+                Dense
+)
+    ,
+    SELECTEDVALUE(Parameter[Parameter Fields])="'reporting_parameter'[Principal Repayments]",
+    RANKX(
+                ALLSELECTED('reporting_parameter'[participant_and_function]),
+                CALCULATE(
+                    SUM('reporting_parameter'[principal_paid]),
+                    ALLEXCEPT('reporting_parameter','reporting_parameter'[participant_and_function])
+                ),
+                ,
+                DESC,
+                Dense
+
+)   ,
+    SELECTEDVALUE(Parameter[Parameter Fields])="'reporting_parameter'[Unutilized Amount]",
+    RANKX(
+                ALLSELECTED('reporting_parameter'[participant_and_function]),
+                CALCULATE(
+                    SUM('reporting_parameter'[Untilized_Amount]),
+                    ALLEXCEPT('reporting_parameter','reporting_parameter'[participant_and_function])
+                ),
+                ,
+                DESC,
+                Dense
+), 
+   SELECTEDVALUE(Parameter[Parameter Fields])="'reporting_parameter'[Average Disbursement Size]",
+    RANKX(
+                ALLSELECTED('reporting_parameter'[participant_and_function]),
+                CALCULATE(
+                    SUM('reporting_parameter'[Avg_disbursement_size]),
+                    ALLEXCEPT('reporting_parameter','reporting_parameter'[participant_and_function])
+                ),
+                ,
+                DESC,
+                Dense 
+    ),
+    SELECTEDVALUE(Parameter[Parameter Fields])="'reporting_parameter'[Average Repayment Size]",
+    RANKX(
+                ALLSELECTED('reporting_parameter'[participant_and_function]),
+                CALCULATE(
+                    SUM('reporting_parameter'[Avg_Repayment_size]),
+                    ALLEXCEPT('reporting_parameter','reporting_parameter'[participant_and_function])
+                ),
+                ,
+                DESC,
+                Dense
+),   
+    SELECTEDVALUE(Parameter[Parameter Fields])="'reporting_parameter'[Commitment Balance]",
+    RANKX(
+                ALLSELECTED('reporting_parameter'[participant_and_function]),
+                CALCULATE(
+                    SUM('reporting_parameter'[commitment_balance]),
+                    ALLEXCEPT('reporting_parameter','reporting_parameter'[participant_and_function])
+                ),
+                ,
+                DESC,
+                Dense
+),
+    SELECTEDVALUE(Parameter[Parameter Fields])="'reporting_parameter'[Cost of Borrowing]",
+    RANKX(
+                ALLSELECTED('reporting_parameter'[participant_and_function]),
+                CALCULATE(
+                    SUM('reporting_parameter'[cost_of_borrowing]),
+                    ALLEXCEPT('reporting_parameter','reporting_parameter'[participant_and_function])
+                ),
+                ,
+                DESC,
+                Dense
+),
+    SELECTEDVALUE(Parameter[Parameter Fields])="'reporting_parameter'[Disbursement Frequency]",
+    RANKX(
+                ALLSELECTED('reporting_parameter'[participant_and_function]),
+                CALCULATE(
+                    SUM('reporting_parameter'[disbursement_frequency]),
+                    ALLEXCEPT('reporting_parameter','reporting_parameter'[participant_and_function])
+                ),
+                ,
+                DESC,
+                Dense
+),
+    SELECTEDVALUE(Parameter[Parameter Fields])="'reporting_parameter'[Loan Limit]",
+    RANKX(
+                ALLSELECTED('reporting_parameter'[participant_and_function]),
+                CALCULATE(
+                    SUM('reporting_parameter'[credit_line_amt]),
+                    ALLEXCEPT('reporting_parameter','reporting_parameter'[participant_and_function])
+                ),
+                ,
+                DESC,
+                Dense
+),
+    SELECTEDVALUE(Parameter[Parameter Fields])="'reporting_parameter'[Loan to Charge Ratio]",
+    RANKX(
+                ALLSELECTED('reporting_parameter'[participant_and_function]),
+                CALCULATE(
+                    SUM('reporting_parameter'[loan_to_charge_ratio]),
+                    ALLEXCEPT('reporting_parameter','reporting_parameter'[participant_and_function])
+                ),
+                ,
+                DESC,
+                Dense
+),
+    SELECTEDVALUE(Parameter[Parameter Fields])="'reporting_parameter'[Net Expected Amount]",
+    RANKX(
+                ALLSELECTED('reporting_parameter'[participant_and_function]),
+                CALCULATE(
+                    SUM('reporting_parameter'[net_exp_amount]),
+                    ALLEXCEPT('reporting_parameter','reporting_parameter'[participant_and_function])
+                ),
+                ,
+                DESC,
+                Dense
+),
+    SELECTEDVALUE(Parameter[Parameter Fields])="'reporting_parameter'[Repayment Frequency]",
+    RANKX(
+                ALLSELECTED('reporting_parameter'[participant_and_function]),
+                CALCULATE(
+                    SUM('reporting_parameter'[repayment_frequency]),
+                    ALLEXCEPT('reporting_parameter','reporting_parameter'[participant_and_function])
+                ),
+                ,
+                DESC,
+                Dense
+),
+    SELECTEDVALUE(Parameter[Parameter Fields])="'reporting_parameter'[Utilization Rate]",
+    RANKX(
+                ALLSELECTED('reporting_parameter'[participant_and_function]),
+                CALCULATE(
+                    SUM('reporting_parameter'[utilization_rate]),
+                    ALLEXCEPT('reporting_parameter','reporting_parameter'[participant_and_function])
+                ),
+                ,
+                DESC,
+                Dense
+),0
+),
+IF(SELECTEDVALUE(CompareWith[Compare With])="Current 30 Days",
+SWITCH(
+    TRUE(),
+    SELECTEDVALUE(Parameter[Parameter Fields])="'reporting_parameter'[Outstanding Balance]",
+    RANKX(
+                ALLSELECTED('reporting_parameter'[participant_and_function]),
+                CALCULATE(
+                    SUM('reporting_parameter'[outstanding_balance]),
+                    ALLEXCEPT('reporting_parameter','reporting_parameter'[participant_and_function]),
+                     'reporting_parameter'[activity_date] >= Last30DaysStart,
+                    'reporting_parameter'[activity_date] <= Last30DaysEnd
+                ),
+                ,
+                DESC,
+                Dense
+)
+    ,
+    SELECTEDVALUE(Parameter[Parameter Fields])="'reporting_parameter'[Loan Balance]",
+    RANKX(
+                ALLSELECTED('reporting_parameter'[participant_and_function]),
+                CALCULATE(
+                    SUM('reporting_parameter'[disbursement_balance]),
+                    ALLEXCEPT('reporting_parameter','reporting_parameter'[participant_and_function]),
+                     'reporting_parameter'[activity_date] >= Last30DaysStart,
+                    'reporting_parameter'[activity_date] <= Last30DaysEnd
+                ),
+                ,
+                DESC,
+                Dense
+)
+    , 
+    SELECTEDVALUE(Parameter[Parameter Fields])="'reporting_parameter'[Disbursements]",
+    RANKX(
+                ALLSELECTED('reporting_parameter'[participant_and_function]),
+                CALCULATE(
+                    SUM('reporting_parameter'[participant_disbursement]),
+                    ALLEXCEPT('reporting_parameter','reporting_parameter'[participant_and_function]),
+                    'reporting_parameter'[activity_date] >= Last30DaysStart,
+                    'reporting_parameter'[activity_date] <= Last30DaysEnd
+                ),
+                ,
+                DESC,
+                Dense
+)
